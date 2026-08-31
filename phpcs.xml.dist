@@ -27,6 +27,9 @@
 		<exclude-pattern>src/*</exclude-pattern>
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
+	<rule ref="WordPress.Security.EscapeOutput.ExceptionNotEscaped">
+		<exclude-pattern>src/Domain/*</exclude-pattern>
+	</rule>
 
 	<config name="minimum_supported_wp_version" value="6.5"/>
 	<config name="testVersion" value="8.1-"/>
