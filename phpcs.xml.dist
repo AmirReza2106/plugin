@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<ruleset name="Workshop Registration">
+	<description>WordPress coding standards for the Workshop Registration plugin.</description>
+
+	<file>workshop-registration.php</file>
+	<file>src</file>
+	<file>tests</file>
+
+	<exclude-pattern>vendor/*</exclude-pattern>
+
+	<arg name="basepath" value="."/>
+	<arg name="colors"/>
+	<arg value="sp"/>
+
+	<rule ref="WordPress"/>
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress-Docs"/>
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid">
+		<exclude-pattern>src/*</exclude-pattern>
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+
+	<config name="minimum_supported_wp_version" value="6.5"/>
+	<config name="testVersion" value="8.1-"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="workshop-registration"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

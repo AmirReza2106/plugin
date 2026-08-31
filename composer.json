@@ -1,0 +1,48 @@
+{
+  "name": "workshop-registration/workshop-registration",
+  "description": "Secure meeting room workshop registration and allocation for WordPress.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=8.1"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1",
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^10.5",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "wp-coding-standards/wpcs": "^3.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "WorkshopRegistration\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WorkshopRegistration\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "scripts": {
+    "analyse": "phpstan analyse --no-progress --memory-limit=512M",
+    "check": [
+      "@lint",
+      "@analyse",
+      "@test"
+    ],
+    "lint": "phpcs",
+    "test": "phpunit"
+  },
+  "repositories": [{
+    "name": "packagist",
+    "type": "composer",
+    "url": "https://mirror-composer.runflare.com"
+  }]
+}
