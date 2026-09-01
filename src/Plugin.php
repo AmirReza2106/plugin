@@ -11,7 +11,10 @@ namespace WorkshopRegistration;
 
 use Throwable;
 use WorkshopRegistration\Access\RoleManager;
+use WorkshopRegistration\Admin\AdminRequestDecisionHandler;
+use WorkshopRegistration\Admin\AdminRequestsPage;
 use WorkshopRegistration\Admin\SchedulingSettingsPage;
+use WorkshopRegistration\Application\AdminRequests\DecideRequest;
 use WorkshopRegistration\Application\EmployeeDashboard\AvailabilityTimelineBuilder;
 use WorkshopRegistration\Application\Registration\RegistrationServiceFactory;
 use WorkshopRegistration\Employee\BookingInputValidator;
@@ -21,9 +24,12 @@ use WorkshopRegistration\Employee\EmployeeNoticeStore;
 use WorkshopRegistration\Infrastructure\Database\Migrator;
 use WorkshopRegistration\Infrastructure\Database\Schema;
 use WorkshopRegistration\Infrastructure\Database\Tables;
+use WorkshopRegistration\Infrastructure\Database\WordPressAdminRequestQuery;
 use WorkshopRegistration\Infrastructure\Database\WordPressEmployeeBookingQuery;
+use WorkshopRegistration\Infrastructure\Database\WordPressRequestDecisionGateway;
 use WorkshopRegistration\Infrastructure\Database\WordPressWorkshopRepository;
 use WorkshopRegistration\Infrastructure\Settings\SchedulingSettings;
+use WorkshopRegistration\Infrastructure\Time\SystemClock;
 
 /**
  * Registers the plugin with WordPress.
@@ -135,6 +141,15 @@ final class Plugin {
 			$wpdb,
 			new Tables( $wpdb->prefix ),
 			new SchedulingSettings()
+		) )->register();
+
+		$tables = new Tables( $wpdb->prefix );
+		( new AdminRequestsPage( new WordPressAdminRequestQuery( $wpdb, $tables ) ) )->register();
+		( new AdminRequestDecisionHandler(
+			new DecideRequest(
+				new WordPressRequestDecisionGateway( $wpdb, $tables ),
+				new SystemClock()
+			)
 		) )->register();
 	}
 

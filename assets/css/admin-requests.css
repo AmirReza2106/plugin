@@ -1,0 +1,331 @@
+.workshop-admin-requests {
+	--admin-navy: #133958;
+	--admin-blue: #2466a2;
+	--admin-border: #d8e1e8;
+	--admin-muted: #617386;
+	max-width: 1280px;
+	font-family: Tahoma, Arial, sans-serif;
+}
+
+.workshop-admin-requests__hero {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24px;
+	margin: 20px 0 24px;
+	padding: 28px 34px;
+	border-radius: 16px;
+	color: #fff;
+	background: linear-gradient(125deg, var(--admin-navy), var(--admin-blue));
+	box-shadow: 0 14px 34px rgba(19, 57, 88, 0.18);
+}
+
+.workshop-admin-requests__hero p,
+.workshop-admin-requests__hero h1,
+.workshop-admin-requests__hero span {
+	margin: 0;
+	color: inherit;
+}
+
+.workshop-admin-requests__hero p {
+	margin-bottom: 8px;
+	font-weight: 700;
+	opacity: 0.75;
+}
+
+.workshop-admin-requests__hero h1 {
+	margin-bottom: 8px;
+	font-size: 27px;
+}
+
+.workshop-admin-requests__summary {
+	min-width: 130px;
+	padding: 16px 20px;
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	border-radius: 12px;
+	text-align: center;
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.workshop-admin-requests__summary strong {
+	display: block;
+	font-size: 30px;
+}
+
+.workshop-admin-requests__panel {
+	padding: 26px;
+	border: 1px solid var(--admin-border);
+	border-radius: 16px;
+	background: #fff;
+	box-shadow: 0 8px 24px rgba(19, 57, 88, 0.07);
+}
+
+.workshop-admin-requests__panel-heading,
+.workshop-admin-request > header,
+.workshop-admin-request__actions {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 18px;
+}
+
+.workshop-admin-requests__panel-heading h2,
+.workshop-admin-requests__panel-heading p {
+	margin: 0;
+}
+
+.workshop-admin-requests__panel-heading p {
+	margin-top: 5px;
+	color: var(--admin-muted);
+}
+
+.workshop-admin-requests__tabs {
+	display: flex;
+	gap: 8px;
+	margin: 24px 0 18px;
+	overflow-x: auto;
+}
+
+.workshop-admin-requests__tabs a {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 9px 13px;
+	border-radius: 9px;
+	color: #40576d;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.workshop-admin-requests__tabs a.is-active {
+	color: #174e7b;
+	background: #eaf3fb;
+	font-weight: 700;
+}
+
+.workshop-admin-requests__tabs span {
+	min-width: 20px;
+	padding: 2px 6px;
+	border-radius: 20px;
+	text-align: center;
+	background: #edf1f4;
+}
+
+.workshop-admin-requests__filters {
+	display: grid;
+	grid-template-columns: minmax(240px, 1fr) 190px auto auto;
+	align-items: end;
+	gap: 12px;
+	margin-bottom: 24px;
+	padding: 16px;
+	border-radius: 12px;
+	background: #f5f8fa;
+}
+
+.workshop-admin-requests__filters label,
+.workshop-admin-requests__filters label span {
+	display: block;
+}
+
+.workshop-admin-requests__filters label span {
+	margin-bottom: 6px;
+	font-weight: 700;
+}
+
+.workshop-admin-requests__filters input {
+	width: 100%;
+}
+
+.workshop-admin-requests__list {
+	display: grid;
+	gap: 14px;
+}
+
+.workshop-admin-request {
+	position: relative;
+	padding: 20px;
+	border: 1px solid var(--admin-border);
+	border-right: 5px solid #8395a7;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.workshop-admin-request--pending {
+	border-right-color: #d59a18;
+}
+
+.workshop-admin-request--approved {
+	border-right-color: #21875b;
+}
+
+.workshop-admin-request--rejected {
+	border-right-color: #b84949;
+}
+
+.workshop-admin-request__identity h3 {
+	margin: 9px 0 6px;
+	font-size: 18px;
+}
+
+.workshop-admin-request__identity code {
+	color: var(--admin-muted);
+}
+
+.workshop-admin-status {
+	display: inline-block;
+	padding: 5px 10px;
+	border-radius: 20px;
+	font-weight: 700;
+}
+
+.workshop-admin-status--pending {
+	color: #7c5600;
+	background: #fff1c7;
+}
+
+.workshop-admin-status--approved {
+	color: #12623e;
+	background: #dff5e9;
+}
+
+.workshop-admin-status--rejected {
+	color: #922f2f;
+	background: #fbe5e5;
+}
+
+.workshop-admin-request__schedule,
+.workshop-admin-request__details dl {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(105px, 1fr));
+	gap: 10px;
+	margin: 0;
+}
+
+.workshop-admin-request__schedule div,
+.workshop-admin-request__details dl div {
+	padding: 10px 13px;
+	border-radius: 9px;
+	background: #f5f8fa;
+}
+
+.workshop-admin-request dt {
+	margin-bottom: 5px;
+	color: var(--admin-muted);
+	font-size: 12px;
+}
+
+.workshop-admin-request dd {
+	margin: 0;
+	font-weight: 700;
+}
+
+.workshop-admin-request details {
+	margin-top: 16px;
+	border-top: 1px solid #edf1f4;
+}
+
+.workshop-admin-request summary {
+	padding: 14px 0 0;
+	cursor: pointer;
+	color: var(--admin-blue);
+	font-weight: 700;
+}
+
+.workshop-admin-request__details {
+	margin-top: 14px;
+	padding: 16px;
+	border-radius: 10px;
+	background: #f9fbfc;
+}
+
+.workshop-admin-request__details dl {
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.workshop-admin-request__description {
+	margin-top: 14px;
+}
+
+.workshop-admin-request__description p {
+	margin-bottom: 0;
+	white-space: pre-wrap;
+}
+
+.workshop-admin-request__actions {
+	justify-content: flex-start;
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px solid #edf1f4;
+}
+
+.workshop-admin-request__actions form {
+	margin: 0;
+}
+
+.workshop-admin-request__reject {
+	border-color: #b84949 !important;
+	color: #a23333 !important;
+}
+
+.workshop-admin-request__final {
+	margin: 16px 0 0;
+	color: var(--admin-muted);
+}
+
+.workshop-admin-requests__empty {
+	padding: 50px 20px;
+	border: 1px dashed #cdd9e2;
+	border-radius: 12px;
+	text-align: center;
+	color: var(--admin-muted);
+}
+
+.workshop-admin-requests__empty .dashicons {
+	width: 42px;
+	height: 42px;
+	font-size: 42px;
+}
+
+.workshop-admin-requests__pagination {
+	margin-top: 22px;
+	text-align: center;
+}
+
+@media (max-width: 782px) {
+	.workshop-admin-requests {
+		margin-right: 10px;
+	}
+
+	.workshop-admin-requests__hero,
+	.workshop-admin-requests__panel-heading,
+	.workshop-admin-request > header {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.workshop-admin-requests__summary {
+		min-width: 0;
+	}
+
+	.workshop-admin-requests__panel {
+		padding: 16px;
+	}
+
+	.workshop-admin-requests__filters {
+		grid-template-columns: 1fr;
+	}
+
+	.workshop-admin-request__schedule,
+	.workshop-admin-request__details dl {
+		grid-template-columns: 1fr;
+	}
+
+	.workshop-admin-request__actions {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.workshop-admin-request__actions button {
+		width: 100%;
+	}
+}
