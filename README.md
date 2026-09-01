@@ -3,8 +3,8 @@
 A WordPress plugin for secure workshop requests and conflict-free meeting room allocation.
 
 The plugin is designed for authenticated company employees. Administrators assign
-the `employee` role in WordPress, configure scheduling rules, and later manage
-approval decisions through the plugin administration screens.
+the `employee` role in WordPress, configure scheduling rules, and manage approval
+decisions through the plugin administration screens.
 
 ## Requirements
 
@@ -47,6 +47,17 @@ docker compose down --volumes --remove-orphans
 The plugin is under active development and is not ready for production use.
 
 ## Current administration
+
+Administrators can review requests from:
+
+```text
+رزرو اتاق جلسه > مدیریت درخواست‌ها
+```
+
+The screen provides status, date, and text filters; complete employee-submitted
+details; and final approve/reject controls. Only pending requests can receive a
+decision. Approval retains the assigned room, while rejection releases it and
+records the administrator decision in status history.
 
 The scheduling page is available to administrators at:
 
