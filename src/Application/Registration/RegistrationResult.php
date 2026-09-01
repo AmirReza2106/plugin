@@ -12,7 +12,7 @@ namespace WorkshopRegistration\Application\Registration;
 use WorkshopRegistration\Domain\WorkshopStatus;
 
 /**
- * Returns the assigned room and one-time private tracking credential.
+ * Returns the assigned room and public request reference.
  */
 final class RegistrationResult {
 	/**
