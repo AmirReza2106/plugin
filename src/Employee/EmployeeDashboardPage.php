@@ -15,6 +15,7 @@ use WorkshopRegistration\Application\Contracts\EmployeeBookingQuery;
 use WorkshopRegistration\Application\Contracts\WorkshopRepository;
 use WorkshopRegistration\Application\EmployeeDashboard\AvailabilityPeriod;
 use WorkshopRegistration\Application\EmployeeDashboard\AvailabilityTimelineBuilder;
+use WorkshopRegistration\Application\EmployeeDashboard\EmployeeBookingPage;
 use WorkshopRegistration\Domain\Scheduling\SchedulingRules;
 use WorkshopRegistration\Domain\WorkshopStatus;
 use WorkshopRegistration\Infrastructure\Settings\SchedulingSettings;
@@ -83,12 +84,25 @@ final class EmployeeDashboardPage {
 		$capacity      = $this->settings->roomCapacity();
 		$reservations  = $this->availability_repository->findActiveReservationsByDate( $selected_date );
 		$rooms         = $this->timeline_builder->build( $rules, $capacity, $reservations );
-		$bookings      = $this->employee_query->findPage(
-			get_current_user_id(),
-			$status,
-			$current_page,
-			self::REQUESTS_PER_PAGE
-		);
+		$can_view_own  = current_user_can( RoleManager::VIEW_OWN_BOOKINGS );
+		$bookings      = $can_view_own
+			? $this->employee_query->findPage(
+				get_current_user_id(),
+				$status,
+				$current_page,
+				self::REQUESTS_PER_PAGE
+			)
+			: new EmployeeBookingPage(
+				array(),
+				0,
+				1,
+				self::REQUESTS_PER_PAGE,
+				array(
+					'pending'  => 0,
+					'approved' => 0,
+					'rejected' => 0,
+				)
+			);
 		$notice        = $this->consumeNotice();
 		$current_user  = wp_get_current_user();
 

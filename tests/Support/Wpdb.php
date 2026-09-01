@@ -26,6 +26,13 @@ if ( ! class_exists( 'wpdb' ) ) {
 		public string $prefix = 'wp_';
 
 		/**
+		 * WordPress users table.
+		 *
+		 * @var string
+		 */
+		public string $users = 'wp_users';
+
+		/**
 		 * Most recent database error.
 		 *
 		 * @var string

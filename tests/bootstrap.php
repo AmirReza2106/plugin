@@ -12,3 +12,4 @@ require_once __DIR__ . '/Support/Wpdb.php';
 require_once __DIR__ . '/Support/EmployeeWordPressFunctionState.php';
 require_once __DIR__ . '/Support/EmployeeWordPressFunctions.php';
 require_once __DIR__ . '/Support/AdminWordPressFunctions.php';
+require_once __DIR__ . '/Support/PrivacyWordPressFunctions.php';

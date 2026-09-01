@@ -12,6 +12,7 @@ namespace WorkshopRegistration\Admin;
 use DateTimeImmutable;
 use WorkshopRegistration\Access\RoleManager;
 use WorkshopRegistration\Application\Contracts\AdminRequestQuery;
+use WorkshopRegistration\Application\Contracts\AdminStatusHistoryQuery;
 use WorkshopRegistration\Domain\WorkshopStatus;
 use WorkshopRegistration\Employee\EmployeeDashboardPage;
 
@@ -33,9 +34,10 @@ final class AdminRequestsPage {
 	/**
 	 * Create the administrator page.
 	 *
-	 * @param AdminRequestQuery $query Administrator request query.
+	 * @param AdminRequestQuery       $query         Administrator request query.
+	 * @param AdminStatusHistoryQuery $history_query Administrator history query.
 	 */
-	public function __construct( private AdminRequestQuery $query ) {
+	public function __construct( private AdminRequestQuery $query, private AdminStatusHistoryQuery $history_query ) {
 	}
 
 	/**
@@ -73,6 +75,9 @@ final class AdminRequestsPage {
 		$search       = $this->selectedSearch();
 		$current_page = $this->selectedPage();
 		$requests     = $this->query->findPage( $status, $date, $search, $current_page, self::REQUESTS_PER_PAGE );
+		$history      = $this->history_query->findByRequestIds(
+			array_map( static fn( $request ): int => $request->id, $requests->items )
+		);
 		$notice       = $this->selectedNotice();
 
 		include plugin_dir_path( WORKSHOP_REGISTRATION_FILE ) . 'templates/admin-requests.php';

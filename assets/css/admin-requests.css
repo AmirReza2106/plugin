@@ -251,6 +251,61 @@
 	white-space: pre-wrap;
 }
 
+.workshop-admin-request__history {
+	margin-top: 18px;
+	padding-top: 16px;
+	border-top: 1px solid #dfe7ed;
+}
+
+.workshop-admin-request__history ol {
+	margin: 14px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.workshop-admin-request__history li {
+	display: grid;
+	grid-template-columns: 12px 1fr;
+	gap: 10px;
+	position: relative;
+	padding-bottom: 16px;
+}
+
+.workshop-admin-request__history li:not(:last-child)::before {
+	content: "";
+	position: absolute;
+	top: 12px;
+	right: 5px;
+	bottom: 0;
+	width: 2px;
+	background: #d7e1e8;
+}
+
+.workshop-admin-request__history-marker {
+	position: relative;
+	z-index: 1;
+	width: 10px;
+	height: 10px;
+	margin-top: 4px;
+	border: 2px solid #fff;
+	border-radius: 50%;
+	background: var(--admin-blue);
+	box-shadow: 0 0 0 1px var(--admin-blue);
+}
+
+.workshop-admin-request__history li div,
+.workshop-admin-request__history li span,
+.workshop-admin-request__history time {
+	display: block;
+}
+
+.workshop-admin-request__history li span,
+.workshop-admin-request__history time {
+	margin-top: 3px;
+	color: var(--admin-muted);
+	font-size: 12px;
+}
+
 .workshop-admin-request__actions {
 	justify-content: flex-start;
 	margin-top: 16px;
