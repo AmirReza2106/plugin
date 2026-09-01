@@ -15,7 +15,7 @@ use Exception;
 use InvalidArgumentException;
 use WorkshopRegistration\Application\Contracts\BookingCoordinator;
 use WorkshopRegistration\Application\Contracts\Clock;
-use WorkshopRegistration\Application\Contracts\RequestIdentityGenerator;
+use WorkshopRegistration\Application\Contracts\PublicReferenceGenerator;
 use WorkshopRegistration\Application\Contracts\WorkshopRepository;
 use WorkshopRegistration\Application\Exception\InvalidWorkshopDate;
 use WorkshopRegistration\Application\Exception\NoRoomAvailable;
@@ -32,7 +32,7 @@ final class RegisterWorkshop {
 	 *
 	 * @param WorkshopRepository       $repository         Workshop persistence gateway.
 	 * @param BookingCoordinator       $coordinator        Atomic booking coordinator.
-	 * @param RequestIdentityGenerator $identity_generator Secure identity generator.
+	 * @param PublicReferenceGenerator $reference_generator Public reference generator.
 	 * @param Clock                    $clock               Application clock.
 	 * @param SchedulingPolicy         $scheduling_policy   Booking-time policy.
 	 * @param StableSlotAllocator      $slot_allocator      Stable room allocator.
@@ -40,7 +40,7 @@ final class RegisterWorkshop {
 	public function __construct(
 		private WorkshopRepository $repository,
 		private BookingCoordinator $coordinator,
-		private RequestIdentityGenerator $identity_generator,
+		private PublicReferenceGenerator $reference_generator,
 		private Clock $clock,
 		private SchedulingPolicy $scheduling_policy,
 		private StableSlotAllocator $slot_allocator
@@ -50,13 +50,18 @@ final class RegisterWorkshop {
 	/**
 	 * Register a pending workshop and return its private tracking credential.
 	 *
-	 * @param RegistrationData $registration Normalized registration data.
-	 * @param int              $capacity     Configured room capacity.
+	 * @param RegistrationData $registration    Normalized registration data.
+	 * @param int              $requester_user_id Authenticated employee user ID.
+	 * @param int              $capacity        Configured room capacity.
 	 * @throws InvalidArgumentException When capacity is not positive.
 	 * @throws InvalidWorkshopDate When the date or timezone is invalid.
 	 * @throws NoRoomAvailable When all stable rooms conflict.
 	 */
-	public function register( RegistrationData $registration, int $capacity ): RegistrationResult {
+	public function register( RegistrationData $registration, int $requester_user_id, int $capacity ): RegistrationResult {
+		if ( $requester_user_id < 1 ) {
+			throw new InvalidArgumentException( 'Requester user ID must be positive.' );
+		}
+
 		if ( $capacity < 1 ) {
 			throw new InvalidArgumentException( 'Room capacity must be positive.' );
 		}
@@ -66,7 +71,7 @@ final class RegisterWorkshop {
 
 		return $this->coordinator->run(
 			$registration->workshopDate,
-			function () use ( $registration, $capacity, $interval ): RegistrationResult {
+			function () use ( $registration, $requester_user_id, $capacity, $interval ): RegistrationResult {
 				$reservations = $this->repository->findActiveReservationsByDate( $registration->workshopDate );
 				$slot_number  = $this->slot_allocator->allocate( $interval, $reservations, $capacity );
 
@@ -74,12 +79,12 @@ final class RegisterWorkshop {
 					throw new NoRoomAvailable( 'No room is available for the requested time.' );
 				}
 
-				$identity   = $this->identity_generator->generate();
-				$created_at = $this->clock->now( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
-				$record     = new NewWorkshopRecord(
+				$public_reference = $this->reference_generator->generate();
+				$created_at       = $this->clock->now( new DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
+				$record           = new NewWorkshopRecord(
 					$registration,
-					$identity->publicReference,
-					$identity->tokenHash,
+					$requester_user_id,
+					$public_reference,
 					$slot_number,
 					$created_at
 				);
@@ -89,8 +94,7 @@ final class RegisterWorkshop {
 
 				return new RegistrationResult(
 					$request_id,
-					$identity->publicReference,
-					$identity->trackingToken,
+					$public_reference,
 					$slot_number,
 					WorkshopStatus::Pending
 				);

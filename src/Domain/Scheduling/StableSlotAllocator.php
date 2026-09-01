@@ -16,27 +16,6 @@ use InvalidArgumentException;
  */
 final class StableSlotAllocator {
 	/**
-	 * Required cleanup gap in minutes.
-	 *
-	 * @var int
-	 */
-	private int $gap_minutes;
-
-	/**
-	 * Create a stable room allocator.
-	 *
-	 * @param int $gap_minutes Required cleanup gap in minutes.
-	 * @throws InvalidArgumentException When the gap is negative.
-	 */
-	public function __construct( int $gap_minutes = SchedulingPolicy::CLEANUP_GAP_MINUTES ) {
-		if ( $gap_minutes < 0 ) {
-			throw new InvalidArgumentException( 'The cleanup gap cannot be negative.' );
-		}
-
-		$this->gap_minutes = $gap_minutes;
-	}
-
-	/**
 	 * Find the lowest available stable room slot.
 	 *
 	 * @param BookingInterval $requested    Requested interval.
@@ -73,7 +52,7 @@ final class StableSlotAllocator {
 				continue;
 			}
 
-			if ( $requested->conflictsWith( $reservation->interval(), $this->gap_minutes ) ) {
+			if ( $requested->conflictsWith( $reservation->interval() ) ) {
 				return false;
 			}
 		}

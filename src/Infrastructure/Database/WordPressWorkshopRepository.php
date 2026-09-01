@@ -13,8 +13,8 @@ use Throwable;
 use WorkshopRegistration\Application\Contracts\WorkshopRepository;
 use WorkshopRegistration\Application\Exception\PersistenceFailure;
 use WorkshopRegistration\Application\Registration\NewWorkshopRecord;
+use WorkshopRegistration\Domain\Scheduling\BookingInterval;
 use WorkshopRegistration\Domain\Scheduling\RoomReservation;
-use WorkshopRegistration\Domain\Scheduling\SchedulingPolicy;
 use WorkshopRegistration\Domain\WorkshopStatus;
 use wpdb;
 
@@ -25,14 +25,12 @@ final class WordPressWorkshopRepository implements WorkshopRepository {
 	/**
 	 * Create the workshop repository.
 	 *
-	 * @param wpdb             $database          WordPress database connection.
-	 * @param Tables           $tables            Plugin table names.
-	 * @param SchedulingPolicy $scheduling_policy Booking-time policy.
+	 * @param wpdb   $database WordPress database connection.
+	 * @param Tables $tables   Plugin table names.
 	 */
 	public function __construct(
 		private wpdb $database,
-		private Tables $tables,
-		private SchedulingPolicy $scheduling_policy
+		private Tables $tables
 	) {
 	}
 
@@ -75,9 +73,9 @@ final class WordPressWorkshopRepository implements WorkshopRepository {
 				}
 
 				$reservations[] = new RoomReservation(
-					$this->scheduling_policy->createInterval(
-						substr( (string) $row['start_time'], 0, 5 ),
-						substr( (string) $row['end_time'], 0, 5 )
+					BookingInterval::fromMinutes(
+						$this->databaseTimeToMinute( (string) $row['start_time'] ),
+						$this->databaseTimeToMinute( (string) $row['end_time'] )
 					),
 					$status,
 					(int) $row['slot_number']
@@ -106,25 +104,25 @@ final class WordPressWorkshopRepository implements WorkshopRepository {
 		$inserted = $this->database->insert(
 			$this->tables->requests(),
 			array(
-				'public_reference'    => $record->publicReference,
-				'tracking_token_hash' => $record->trackingTokenHash,
-				'first_name'          => $data->firstName,
-				'last_name'           => $data->lastName,
-				'mobile'              => $data->mobile,
-				'mobile_normalized'   => $data->mobileNormalized,
-				'email'               => $data->email,
-				'workshop_title'      => $data->workshopTitle,
-				'workshop_date'       => $data->workshopDate,
-				'start_time'          => $data->startTime,
-				'end_time'            => $data->endTime,
-				'site_timezone'       => $data->siteTimezone,
-				'description'         => $data->description,
-				'status'              => WorkshopStatus::Pending->value,
-				'slot_number'         => $record->slotNumber,
-				'created_at'          => $record->createdAt,
-				'updated_at'          => $record->createdAt,
+				'requester_user_id' => $record->requesterUserId,
+				'public_reference'  => $record->publicReference,
+				'first_name'        => $data->firstName,
+				'last_name'         => $data->lastName,
+				'mobile'            => $data->mobile,
+				'mobile_normalized' => $data->mobileNormalized,
+				'email'             => $data->email,
+				'workshop_title'    => $data->workshopTitle,
+				'workshop_date'     => $data->workshopDate,
+				'start_time'        => $data->startTime,
+				'end_time'          => $data->endTime,
+				'site_timezone'     => $data->siteTimezone,
+				'description'       => $data->description,
+				'status'            => WorkshopStatus::Pending->value,
+				'slot_number'       => $record->slotNumber,
+				'created_at'        => $record->createdAt,
+				'updated_at'        => $record->createdAt,
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s' )
+			array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s' )
 		);
 
 		if ( false === $inserted || $this->database->insert_id < 1 ) {
@@ -161,5 +159,21 @@ final class WordPressWorkshopRepository implements WorkshopRepository {
 		if ( false === $inserted ) {
 			throw new PersistenceFailure( 'The workshop status history could not be stored.' );
 		}
+	}
+
+	/**
+	 * Convert a trusted database TIME value to minutes after midnight.
+	 *
+	 * @param string $time Database time value.
+	 * @throws PersistenceFailure When the stored value is invalid.
+	 */
+	private function databaseTimeToMinute( string $time ): int {
+		if ( 1 !== preg_match( '/\A(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d\z/', $time ) ) {
+			throw new PersistenceFailure( 'A stored workshop time is invalid.' );
+		}
+
+		$parts = array_map( 'intval', explode( ':', $time ) );
+
+		return ( $parts[0] * 60 ) + $parts[1];
 	}
 }

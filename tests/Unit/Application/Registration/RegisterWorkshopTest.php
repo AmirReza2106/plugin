@@ -15,14 +15,13 @@ use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use WorkshopRegistration\Application\Contracts\BookingCoordinator;
 use WorkshopRegistration\Application\Contracts\Clock;
-use WorkshopRegistration\Application\Contracts\RequestIdentityGenerator;
+use WorkshopRegistration\Application\Contracts\PublicReferenceGenerator;
 use WorkshopRegistration\Application\Contracts\WorkshopRepository;
 use WorkshopRegistration\Application\Exception\InvalidWorkshopDate;
 use WorkshopRegistration\Application\Exception\NoRoomAvailable;
 use WorkshopRegistration\Application\Registration\NewWorkshopRecord;
 use WorkshopRegistration\Application\Registration\RegisterWorkshop;
 use WorkshopRegistration\Application\Registration\RegistrationData;
-use WorkshopRegistration\Application\Registration\RequestIdentity;
 use WorkshopRegistration\Domain\Scheduling\RoomReservation;
 use WorkshopRegistration\Domain\Scheduling\SchedulingPolicy;
 use WorkshopRegistration\Domain\Scheduling\StableSlotAllocator;
@@ -33,23 +32,23 @@ use WorkshopRegistration\Domain\WorkshopStatus;
  */
 final class RegisterWorkshopTest extends TestCase {
 	/**
-	 * Registration allocates and persists inside the coordinated operation.
+	 * Registration persists authenticated employee ownership atomically.
 	 */
-	public function test_it_persists_a_hash_and_returns_the_raw_token(): void {
+	public function test_it_persists_employee_ownership_and_public_reference(): void {
 		$repository  = new InMemoryWorkshopRepository();
 		$coordinator = new RecordingBookingCoordinator();
 		$service     = $this->service( $repository, $coordinator );
 
-		$result = $service->register( $this->registration(), 2 );
+		$result = $service->register( $this->registration(), 7, 2 );
 
 		self::assertSame( array( '2030-05-20' ), $coordinator->dates );
 		self::assertTrue( $repository->insertedInsideCoordinator );
-		self::assertSame( 'private-token', $result->trackingToken );
+		self::assertSame( 'public-reference', $result->publicReference );
 		self::assertSame( 1, $result->slotNumber );
 		self::assertSame( WorkshopStatus::Pending, $result->status );
 		self::assertNotNull( $repository->record );
-		self::assertSame( str_repeat( 'a', 64 ), $repository->record->trackingTokenHash );
-		self::assertNotSame( $result->trackingToken, $repository->record->trackingTokenHash );
+		self::assertSame( 7, $repository->record->requesterUserId );
+		self::assertSame( 'public-reference', $repository->record->publicReference );
 		self::assertSame( array( 41, 1, '2030-01-01 08:00:00' ), $repository->history );
 	}
 
@@ -64,7 +63,7 @@ final class RegisterWorkshopTest extends TestCase {
 			new RoomReservation( $policy->createInterval( '09:00', '10:00' ), WorkshopStatus::Approved, 1 ),
 		);
 
-		$result = $this->service( $repository, $coordinator )->register( $this->registration(), 2 );
+		$result = $this->service( $repository, $coordinator )->register( $this->registration(), 7, 2 );
 
 		self::assertSame( 2, $result->slotNumber );
 		self::assertSame( 2, $repository->record?->slotNumber );
@@ -84,7 +83,7 @@ final class RegisterWorkshopTest extends TestCase {
 		$this->expectException( NoRoomAvailable::class );
 
 		try {
-			$this->service( $repository, $coordinator )->register( $this->registration(), 1 );
+			$this->service( $repository, $coordinator )->register( $this->registration(), 7, 1 );
 		} finally {
 			self::assertNull( $repository->record );
 			self::assertNull( $repository->history );
@@ -103,7 +102,7 @@ final class RegisterWorkshopTest extends TestCase {
 		$this->expectExceptionMessage( InvalidWorkshopDate::PAST_DATE );
 
 		try {
-			$this->service( $repository, $coordinator )->register( $registration, 1 );
+			$this->service( $repository, $coordinator )->register( $registration, 7, 1 );
 		} finally {
 			self::assertSame( array(), $coordinator->dates );
 		}
@@ -119,7 +118,7 @@ final class RegisterWorkshopTest extends TestCase {
 		$this->expectException( RuntimeException::class );
 		$this->expectExceptionMessage( 'history failed' );
 
-		$this->service( $repository, new RecordingBookingCoordinator() )->register( $this->registration(), 1 );
+		$this->service( $repository, new RecordingBookingCoordinator() )->register( $this->registration(), 7, 1 );
 	}
 
 	/**
@@ -137,7 +136,7 @@ final class RegisterWorkshopTest extends TestCase {
 		return new RegisterWorkshop(
 			$repository,
 			$coordinator,
-			new FixedIdentityGenerator(),
+			new FixedReferenceGenerator(),
 			new FixedClock(),
 			new SchedulingPolicy(),
 			new StableSlotAllocator()
@@ -235,11 +234,11 @@ final class InMemoryWorkshopRepository implements WorkshopRepository {
 }
 
 /**
- * Provides deterministic request identity data.
+ * Provides a deterministic public request reference.
  */
-final class FixedIdentityGenerator implements RequestIdentityGenerator {
-	public function generate(): RequestIdentity {
-		return new RequestIdentity( 'public-reference', 'private-token', str_repeat( 'a', 64 ) );
+final class FixedReferenceGenerator implements PublicReferenceGenerator {
+	public function generate(): string {
+		return 'public-reference';
 	}
 }
 

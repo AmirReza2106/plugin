@@ -28,7 +28,9 @@ final class SchemaTest extends TestCase {
 
 		self::assertCount( 2, $statements );
 		self::assertStringContainsString( 'CREATE TABLE wp_workshop_requests', $statements[0] );
-		self::assertStringContainsString( 'UNIQUE KEY tracking_token_hash', $statements[0] );
+		self::assertStringContainsString( 'requester_user_id bigint(20) unsigned NOT NULL', $statements[0] );
+		self::assertStringContainsString( 'KEY requester_status_date', $statements[0] );
+		self::assertStringNotContainsString( 'tracking_token_hash', $statements[0] );
 		self::assertStringContainsString( 'KEY allocation_lookup', $statements[0] );
 		self::assertStringContainsString( 'CREATE TABLE wp_workshop_status_history', $statements[1] );
 		self::assertStringContainsString( 'KEY request_history', $statements[1] );

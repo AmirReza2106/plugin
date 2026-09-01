@@ -72,18 +72,12 @@ final class BookingInterval {
 	}
 
 	/**
-	 * Determine whether two intervals conflict including the room cleanup gap.
+	 * Determine whether two half-open intervals overlap.
 	 *
-	 * @param self $other       Interval to compare.
-	 * @param int  $gap_minutes Required gap after either booking.
-	 * @throws InvalidArgumentException When the gap is negative.
+	 * @param self $other Interval to compare.
 	 */
-	public function conflictsWith( self $other, int $gap_minutes ): bool {
-		if ( $gap_minutes < 0 ) {
-			throw new InvalidArgumentException( 'The cleanup gap cannot be negative.' );
-		}
-
-		return $this->start_minute < ( $other->end_minute + $gap_minutes )
-			&& ( $this->end_minute + $gap_minutes ) > $other->start_minute;
+	public function conflictsWith( self $other ): bool {
+		return $this->start_minute < $other->end_minute
+			&& $this->end_minute > $other->start_minute;
 	}
 }

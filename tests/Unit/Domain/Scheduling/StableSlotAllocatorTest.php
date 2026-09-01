@@ -31,7 +31,7 @@ final class StableSlotAllocatorTest extends TestCase {
 			new RoomReservation( $policy->createInterval( '09:00', '09:30' ), WorkshopStatus::Approved, 2 ),
 		);
 
-		self::assertSame( 3, $allocator->allocate( $requested, $reservations, 3 ) );
+		self::assertSame( 2, $allocator->allocate( $requested, $reservations, 3 ) );
 	}
 
 	/**
@@ -50,9 +50,9 @@ final class StableSlotAllocatorTest extends TestCase {
 	}
 
 	/**
-	 * The first room becomes reusable exactly after the cleanup period.
+	 * The first room becomes reusable exactly when its booking ends.
 	 */
-	public function test_it_reuses_a_slot_after_the_full_cleanup_gap(): void {
+	public function test_it_reuses_a_slot_at_the_previous_end_time(): void {
 		$policy       = new SchedulingPolicy();
 		$reservations = array(
 			new RoomReservation( $policy->createInterval( '09:00', '10:00' ), WorkshopStatus::Approved, 1 ),
@@ -60,7 +60,7 @@ final class StableSlotAllocatorTest extends TestCase {
 
 		self::assertSame(
 			1,
-			( new StableSlotAllocator() )->allocate( $policy->createInterval( '10:15', '10:45' ), $reservations, 1 )
+			( new StableSlotAllocator() )->allocate( $policy->createInterval( '10:00', '10:30' ), $reservations, 1 )
 		);
 	}
 

@@ -14,19 +14,18 @@ use WorkshopRegistration\Domain\Scheduling\BookingInterval;
 use WorkshopRegistration\Domain\Scheduling\SchedulingPolicy;
 
 /**
- * Verifies cleanup-aware interval conflict semantics.
+ * Verifies half-open interval conflict semantics without a meeting gap.
  */
 final class BookingIntervalTest extends TestCase {
 	/**
-	 * A full cleanup gap is required in either chronological direction.
+	 * A meeting can begin at the exact minute another meeting ends.
 	 */
-	public function test_it_applies_the_cleanup_gap_symmetrically(): void {
+	public function test_exact_end_and_start_times_do_not_conflict(): void {
 		$policy   = new SchedulingPolicy();
 		$existing = $policy->createInterval( '09:00', '10:00' );
 
-		self::assertTrue( $existing->conflictsWith( $policy->createInterval( '10:00', '10:30' ), 15 ) );
-		self::assertTrue( $existing->conflictsWith( BookingInterval::fromMinutes( 614, 644 ), 15 ) );
-		self::assertFalse( $existing->conflictsWith( $policy->createInterval( '10:15', '10:45' ), 15 ) );
-		self::assertFalse( $policy->createInterval( '10:15', '10:45' )->conflictsWith( $existing, 15 ) );
+		self::assertFalse( $existing->conflictsWith( $policy->createInterval( '10:00', '10:30' ) ) );
+		self::assertTrue( $existing->conflictsWith( BookingInterval::fromMinutes( 599, 629 ) ) );
+		self::assertFalse( $policy->createInterval( '10:00', '10:30' )->conflictsWith( $existing ) );
 	}
 }

@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use WorkshopRegistration\Domain\Scheduling\InvalidBookingTime;
 use WorkshopRegistration\Domain\Scheduling\SchedulingPolicy;
+use WorkshopRegistration\Domain\Scheduling\SchedulingRules;
 
 /**
  * Verifies all company booking-time constraints.
@@ -58,6 +59,17 @@ final class SchedulingPolicyTest extends TestCase {
 		} catch ( InvalidBookingTime $exception ) {
 			self::assertSame( $expected_reason, $exception->reason() );
 		}
+	}
+
+	/**
+	 * Administrator rules replace the initial working-hour and duration defaults.
+	 */
+	public function test_it_uses_configured_scheduling_rules(): void {
+		$policy   = new SchedulingPolicy( new SchedulingRules( 480, 1020, 15, 120 ) );
+		$interval = $policy->createInterval( '08:00', '09:30' );
+
+		self::assertSame( 480, $interval->startMinute() );
+		self::assertSame( 570, $interval->endMinute() );
 	}
 
 	/**

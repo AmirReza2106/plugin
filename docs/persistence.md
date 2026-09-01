@@ -28,16 +28,19 @@ Lock names contain a fixed plugin prefix and the first 40 hexadecimal characters
 of a SHA-256 hash over the WordPress table prefix and workshop date. This keeps
 names bounded, site-specific, and free of public input.
 
-## Tracking Credentials
+## Employee Ownership
 
-Each request receives:
+Each request stores:
 
-- A public UUID reference.
-- A 256-bit random tracking token returned to the caller once.
-- A SHA-256 hash of that token stored in the requests table.
+- The authenticated WordPress employee user ID.
+- A public UUID reference for non-sequential display.
+- A snapshot of the submitted name, mobile number, and email address.
 
-The raw tracking token is never passed to the repository, stored in MariaDB, or
-written to logs. The private status page will use the raw token in Step 6.
+User ownership is supplied by the server and never accepted from a form field.
+The employee workflow does not use public tracking tokens.
+
+Schema version 2 deletes ownerless legacy requests and their status history, as
+required by the internal-only product migration.
 
 ## Error Boundary
 
