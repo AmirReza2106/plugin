@@ -10,9 +10,12 @@ declare(strict_types=1);
 namespace WorkshopRegistration;
 
 use Throwable;
+use WorkshopRegistration\Access\RoleManager;
+use WorkshopRegistration\Admin\SchedulingSettingsPage;
 use WorkshopRegistration\Infrastructure\Database\Migrator;
 use WorkshopRegistration\Infrastructure\Database\Schema;
 use WorkshopRegistration\Infrastructure\Database\Tables;
+use WorkshopRegistration\Infrastructure\Settings\SchedulingSettings;
 
 /**
  * Registers the plugin with WordPress.
@@ -37,7 +40,9 @@ final class Plugin {
 	public static function boot(): void {
 		register_activation_hook( WORKSHOP_REGISTRATION_FILE, array( self::class, 'activate' ) );
 		add_action( 'plugins_loaded', array( self::class, 'maybeMigrate' ), 5 );
+		add_action( 'plugins_loaded', array( self::class, 'maybeProvisionAccess' ), 6 );
 		add_action( 'init', array( self::class, 'loadTextDomain' ) );
+		self::registerAdmin();
 	}
 
 	/**
@@ -45,6 +50,16 @@ final class Plugin {
 	 */
 	public static function activate(): void {
 		self::migrator()->migrate();
+		( new RoleManager() )->install();
+		( new SchedulingSettings() )->installDefaults();
+	}
+
+	/**
+	 * Provision role capabilities and default settings after updates.
+	 */
+	public static function maybeProvisionAccess(): void {
+		( new RoleManager() )->maybeInstall();
+		( new SchedulingSettings() )->installDefaults();
 	}
 
 	/**
@@ -72,7 +87,7 @@ final class Plugin {
 
 		?>
 		<div class="notice notice-error">
-			<p><?php esc_html_e( 'Workshop Registration could not update its database. Check the WordPress error log and try again.', 'workshop-registration' ); ?></p>
+			<p><?php esc_html_e( 'به‌روزرسانی پایگاه داده افزونه انجام نشد. گزارش خطاهای وردپرس را بررسی و دوباره تلاش کنید.', 'workshop-registration' ); ?></p>
 		</div>
 		<?php
 	}
@@ -99,5 +114,18 @@ final class Plugin {
 			new Schema(),
 			new Tables( $wpdb->prefix )
 		);
+	}
+
+	/**
+	 * Register administrator-only configuration hooks.
+	 */
+	private static function registerAdmin(): void {
+		global $wpdb;
+
+		( new SchedulingSettingsPage(
+			$wpdb,
+			new Tables( $wpdb->prefix ),
+			new SchedulingSettings()
+		) )->register();
 	}
 }

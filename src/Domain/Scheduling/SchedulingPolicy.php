@@ -10,20 +10,24 @@ declare(strict_types=1);
 namespace WorkshopRegistration\Domain\Scheduling;
 
 /**
- * Validates booking times against fixed company scheduling rules.
+ * Validates booking times against configurable company scheduling rules.
  */
 final class SchedulingPolicy {
-	public const WORKDAY_START_MINUTE = 540;
+	/**
+	 * Active company scheduling rules.
+	 *
+	 * @var SchedulingRules
+	 */
+	private SchedulingRules $rules;
 
-	public const WORKDAY_END_MINUTE = 1080;
-
-	public const MINIMUM_DURATION_MINUTES = 30;
-
-	public const MAXIMUM_DURATION_MINUTES = 60;
-
-	public const TIME_INCREMENT_MINUTES = 15;
-
-	public const CLEANUP_GAP_MINUTES = 15;
+	/**
+	 * Create a policy with configured rules or company defaults.
+	 *
+	 * @param SchedulingRules|null $rules Configured scheduling rules.
+	 */
+	public function __construct( ?SchedulingRules $rules = null ) {
+		$this->rules = $rules ?? SchedulingRules::defaults();
+	}
 
 	/**
 	 * Validate submitted times and create their booking interval.
@@ -36,17 +40,17 @@ final class SchedulingPolicy {
 		$start_minute = $this->parseTime( $start_time );
 		$end_minute   = $this->parseTime( $end_time );
 
-		if ( 0 !== $start_minute % self::TIME_INCREMENT_MINUTES || 0 !== $end_minute % self::TIME_INCREMENT_MINUTES ) {
+		if ( 0 !== $start_minute % SchedulingRules::TIME_INCREMENT_MINUTES || 0 !== $end_minute % SchedulingRules::TIME_INCREMENT_MINUTES ) {
 			throw new InvalidBookingTime( InvalidBookingTime::INVALID_INCREMENT );
 		}
 
-		if ( $start_minute < self::WORKDAY_START_MINUTE || $end_minute > self::WORKDAY_END_MINUTE ) {
+		if ( $start_minute < $this->rules->workdayStartMinute || $end_minute > $this->rules->workdayEndMinute ) {
 			throw new InvalidBookingTime( InvalidBookingTime::OUTSIDE_WORKING_HOURS );
 		}
 
 		$duration = $end_minute - $start_minute;
 
-		if ( $duration < self::MINIMUM_DURATION_MINUTES || $duration > self::MAXIMUM_DURATION_MINUTES ) {
+		if ( $duration < $this->rules->minimumDuration || $duration > $this->rules->maximumDuration ) {
 			throw new InvalidBookingTime( InvalidBookingTime::INVALID_DURATION );
 		}
 

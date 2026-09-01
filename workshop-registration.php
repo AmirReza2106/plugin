@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       Workshop Registration
+ * Plugin Name:       ثبت‌نام کارگاه و رزرو اتاق
  * Plugin URI:        https://example.com/workshop-registration
- * Description:       Secure workshop registration and meeting room allocation.
+ * Description:       ثبت درخواست کارگاه و تخصیص امن و بدون تداخل اتاق جلسات.
  * Version:           0.1.0
  * Requires at least: 6.5
  * Requires PHP:      8.1

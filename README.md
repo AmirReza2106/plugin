@@ -2,6 +2,10 @@
 
 A WordPress plugin for secure workshop requests and conflict-free meeting room allocation.
 
+The plugin is designed for authenticated company employees. Administrators assign
+the `employee` role in WordPress, configure scheduling rules, and later manage
+approval decisions through the plugin administration screens.
+
 ## Requirements
 
 - WordPress 6.5 or newer
@@ -41,3 +45,15 @@ docker compose down --volumes --remove-orphans
 ```
 
 The plugin is under active development and is not ready for production use.
+
+## Current administration
+
+The scheduling page is available to administrators at:
+
+```text
+Settings > رزرو اتاق جلسه
+```
+
+It configures numbered room capacity, working hours, and minimum/maximum booking
+duration. Times use fixed 15-minute increments, and adjacent meetings may use the
+same room with no mandatory gap.

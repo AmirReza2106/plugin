@@ -27,8 +27,8 @@ final class Schema {
 		return array(
 			"CREATE TABLE {$requests_table} (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+				requester_user_id bigint(20) unsigned NOT NULL,
 				public_reference char(36) NOT NULL,
-				tracking_token_hash char(64) NOT NULL,
 				first_name varchar(100) NOT NULL,
 				last_name varchar(100) NOT NULL,
 				mobile varchar(32) NOT NULL,
@@ -48,7 +48,7 @@ final class Schema {
 				updated_at datetime NOT NULL,
 				PRIMARY KEY  (id),
 				UNIQUE KEY public_reference (public_reference),
-				UNIQUE KEY tracking_token_hash (tracking_token_hash),
+				KEY requester_status_date (requester_user_id,status,workshop_date),
 				KEY date_status (workshop_date,status),
 				KEY allocation_lookup (workshop_date,slot_number,status,start_time,end_time),
 				KEY mobile_normalized (mobile_normalized),

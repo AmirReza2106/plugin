@@ -1,34 +1,31 @@
 # Scheduling Rules
 
-The scheduling domain treats room bookings as half-open intervals. A meeting
-occupies its requested interval plus a cleanup period after its end time.
+The scheduling domain treats room bookings as half-open intervals. A room becomes
+available at the exact minute its current meeting ends.
 
 ## Booking Policy
 
-- Working hours are 09:00 through 18:00.
-- The earliest valid start is 09:00.
-- The latest valid end is 18:00.
-- A booking lasts at least 30 minutes and at most 60 minutes.
+- Working hours default to 09:00 through 18:00 and are administrator-configurable.
+- Booking duration defaults to 30 through 60 minutes and is configurable.
 - Start and end times use 15-minute increments.
-- One room requires a 15-minute cleanup gap between bookings.
+- There is no mandatory gap between meetings.
 - Pending and approved requests reserve room capacity.
 - Rejected requests do not reserve room capacity.
 
-The submitted booking must end by 18:00. Its internal cleanup occupancy may end
-after 18:00 because no later booking can begin outside working hours.
+Rule changes apply when validating new requests. Existing active requests remain
+part of conflict detection even if later settings would no longer accept them.
 
 ## Conflict Detection
 
-Two bookings can use the same room only when either booking, including its
-cleanup gap, finishes before the other begins:
+Two bookings conflict only when their requested intervals overlap:
 
 ```text
-requested_end + 15 <= existing_start
-or
-existing_end + 15 <= requested_start
+existing_start < requested_end
+and
+existing_end > requested_start
 ```
 
-An end plus cleanup time equal to the next start is allowed.
+An existing end equal to the next start is allowed.
 
 ## Stable Allocation
 
@@ -40,9 +37,8 @@ application layer must reject the submission.
 ## Minimum Room Count
 
 The theoretical minimum is calculated with a sweep line over active requests.
-Each request contributes a start event and an end event at its requested end plus
-15 minutes. End events are processed before starts at the same minute. The peak
-number of active intervals is the minimum room count.
+Each request contributes a start and end event. End events are processed before
+starts at the same minute. The peak active count is the minimum room count.
 
 For example:
 
@@ -50,8 +46,8 @@ For example:
 09:00-10:00
 09:30-10:30
 10:00-11:00
-11:15-12:00
+11:00-12:00
 ```
 
-The minimum is three rooms because the first three cleanup-aware intervals are
-simultaneously active at 10:00.
+The minimum is two rooms because the 09:00 meeting releases its room exactly when
+the 10:00 meeting begins.
