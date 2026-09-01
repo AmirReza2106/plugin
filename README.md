@@ -32,6 +32,12 @@ Run all current checks:
 docker compose exec php composer --working-dir=/var/www/html/wp-content/plugins/workshop-registration check
 ```
 
+Build a production archive in `dist/`:
+
+```bash
+./bin/build-release.sh
+```
+
 Stop the environment without deleting its data:
 
 ```bash
@@ -68,3 +74,7 @@ Settings > رزرو اتاق جلسه
 It configures numbered room capacity, working hours, and minimum/maximum booking
 duration. Times use fixed 15-minute increments, and adjacent meetings may use the
 same room with no mandatory gap.
+
+See [the operations guide](docs/operations.md) for roles, workflows, deployment
+verification, and packaging. See [the privacy guide](docs/privacy.md) for stored
+data, visibility boundaries, and WordPress export/erasure behavior.

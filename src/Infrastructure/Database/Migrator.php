@@ -16,7 +16,7 @@ use wpdb;
  * Applies idempotent custom table migrations and tracks their version.
  */
 final class Migrator {
-	public const SCHEMA_VERSION = '2.0.0';
+	public const SCHEMA_VERSION = '2.1.0';
 
 	public const VERSION_OPTION = 'workshop_registration_schema_version';
 
@@ -79,6 +79,10 @@ final class Migrator {
 			$this->migrateEmployeeOwnership();
 		}
 
+		if ( is_string( $installed_version ) && version_compare( $installed_version, '2.1.0', '<' ) ) {
+			$this->migrateTransactionalEngine();
+		}
+
 		foreach ( $this->schema->statements( $this->tables, $this->database->get_charset_collate() ) as $statement ) {
 			dbDelta( $statement );
 
@@ -132,6 +136,16 @@ final class Migrator {
 		$this->executeMigrationStatement(
 			"ALTER TABLE {$requests} MODIFY requester_user_id bigint(20) unsigned NOT NULL"
 		);
+	}
+
+	/**
+	 * Enforce the transactional storage engine required by locking workflows.
+	 *
+	 * @throws RuntimeException When an engine migration fails.
+	 */
+	private function migrateTransactionalEngine(): void {
+		$this->executeMigrationStatement( 'ALTER TABLE ' . $this->tables->requests() . ' ENGINE=InnoDB' );
+		$this->executeMigrationStatement( 'ALTER TABLE ' . $this->tables->statusHistory() . ' ENGINE=InnoDB' );
 	}
 
 	/**

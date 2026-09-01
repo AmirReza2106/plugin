@@ -55,7 +55,7 @@ final class Schema {
 				KEY requester_name (last_name,first_name),
 				KEY email (email),
 				KEY created_at (created_at)
-			) {$charset_collate};",
+			) ENGINE=InnoDB {$charset_collate};",
 			"CREATE TABLE {$history_table} (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				request_id bigint(20) unsigned NOT NULL,
@@ -68,7 +68,7 @@ final class Schema {
 				PRIMARY KEY  (id),
 				KEY request_history (request_id,created_at),
 				KEY actor_user_id (actor_user_id)
-			) {$charset_collate};",
+			) ENGINE=InnoDB {$charset_collate};",
 		);
 	}
 }

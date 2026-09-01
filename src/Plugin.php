@@ -25,11 +25,13 @@ use WorkshopRegistration\Infrastructure\Database\Migrator;
 use WorkshopRegistration\Infrastructure\Database\Schema;
 use WorkshopRegistration\Infrastructure\Database\Tables;
 use WorkshopRegistration\Infrastructure\Database\WordPressAdminRequestQuery;
+use WorkshopRegistration\Infrastructure\Database\WordPressAdminStatusHistoryQuery;
 use WorkshopRegistration\Infrastructure\Database\WordPressEmployeeBookingQuery;
 use WorkshopRegistration\Infrastructure\Database\WordPressRequestDecisionGateway;
 use WorkshopRegistration\Infrastructure\Database\WordPressWorkshopRepository;
 use WorkshopRegistration\Infrastructure\Settings\SchedulingSettings;
 use WorkshopRegistration\Infrastructure\Time\SystemClock;
+use WorkshopRegistration\Privacy\PersonalDataPrivacy;
 
 /**
  * Registers the plugin with WordPress.
@@ -58,6 +60,7 @@ final class Plugin {
 		add_action( 'init', array( self::class, 'loadTextDomain' ) );
 		self::registerAdmin();
 		self::registerEmployeeDashboard();
+		self::registerPrivacy();
 	}
 
 	/**
@@ -144,7 +147,10 @@ final class Plugin {
 		) )->register();
 
 		$tables = new Tables( $wpdb->prefix );
-		( new AdminRequestsPage( new WordPressAdminRequestQuery( $wpdb, $tables ) ) )->register();
+		( new AdminRequestsPage(
+			new WordPressAdminRequestQuery( $wpdb, $tables ),
+			new WordPressAdminStatusHistoryQuery( $wpdb, $tables )
+		) )->register();
 		( new AdminRequestDecisionHandler(
 			new DecideRequest(
 				new WordPressRequestDecisionGateway( $wpdb, $tables ),
@@ -176,6 +182,18 @@ final class Plugin {
 			$settings,
 			new BookingInputValidator(),
 			$notice_store
+		) )->register();
+	}
+
+	/**
+	 * Register WordPress personal-data privacy integration.
+	 */
+	private static function registerPrivacy(): void {
+		global $wpdb;
+
+		( new PersonalDataPrivacy(
+			$wpdb,
+			new Tables( $wpdb->prefix )
 		) )->register();
 	}
 }

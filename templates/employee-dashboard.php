@@ -8,6 +8,7 @@
  * @var int                                                                                      $capacity
  * @var list<WorkshopRegistration\Application\EmployeeDashboard\RoomAvailability>               $rooms
  * @var WorkshopRegistration\Application\EmployeeDashboard\EmployeeBookingPage                  $bookings
+ * @var bool                                                                                      $can_view_own
  * @var array<string, mixed>|null                                                                $notice
  * @var WP_User                                                                                  $current_user
  * @var WorkshopRegistration\Employee\EmployeeDashboardPage                                      $this
@@ -86,6 +87,13 @@ $tabs      = array(
 							></span>
 						<?php endforeach; ?>
 					</div>
+					<?php if ( array() !== $room->occupied ) : ?>
+						<ul class="screen-reader-text" aria-label="بازه‌های اشغال اتاق <?php echo esc_attr( (string) $room->slotNumber ); ?>">
+							<?php foreach ( $room->occupied as $period ) : ?>
+								<li>اشغال از <?php echo esc_html( $this->formatMinute( $period->startMinute ) ); ?> تا <?php echo esc_html( $this->formatMinute( $period->endMinute ) ); ?></li>
+							<?php endforeach; ?>
+						</ul>
+					<?php endif; ?>
 					<div class="workshop-room-card__periods">
 						<strong>زمان‌های آزاد:</strong>
 						<?php if ( array() === $room->available ) : ?>
@@ -101,6 +109,7 @@ $tabs      = array(
 		</div>
 	</section>
 
+	<?php if ( $can_view_own ) : ?>
 	<section class="workshop-dashboard__section" aria-labelledby="my-bookings-title">
 		<div class="workshop-dashboard__section-heading">
 			<div>
@@ -175,6 +184,7 @@ $tabs      = array(
 			</div>
 		<?php endif; ?>
 	</section>
+	<?php endif; ?>
 
 	<dialog class="workshop-booking-dialog" data-booking-dialog aria-labelledby="booking-dialog-title">
 		<div class="workshop-booking-dialog__header">

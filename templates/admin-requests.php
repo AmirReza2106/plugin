@@ -6,6 +6,7 @@
  * @var string|null                                                             $date
  * @var string                                                                  $search
  * @var WorkshopRegistration\Application\AdminRequests\AdminRequestPage       $requests
+ * @var array<int, list<WorkshopRegistration\Application\AdminRequests\AdminStatusHistoryItem>> $history
  * @var string|null                                                             $notice
  * @var WorkshopRegistration\Admin\AdminRequestsPage                           $this
  *
@@ -132,6 +133,24 @@ $base_args   = array_filter(
 									<?php endif; ?>
 								</dl>
 								<div class="workshop-admin-request__description"><strong>توضیحات</strong><p><?php echo esc_html( $request->description ); ?></p></div>
+								<section class="workshop-admin-request__history" aria-label="سابقه وضعیت درخواست">
+									<strong>سابقه وضعیت</strong>
+									<ol>
+										<?php foreach ( $history[ $request->id ] ?? array() as $event ) : ?>
+											<li>
+												<span class="workshop-admin-request__history-marker" aria-hidden="true"></span>
+												<div>
+													<b><?php echo esc_html( $this->statusLabel( $event->toStatus ) ); ?></b>
+													<span>
+														<?php if ( null === $event->fromStatus ) : ?>ثبت اولیه درخواست<?php else : ?>تغییر از <?php echo esc_html( $this->statusLabel( $event->fromStatus ) ); ?><?php endif; ?>
+														<?php if ( null !== $event->actorUserId ) : ?> توسط <?php echo esc_html( $event->actorDisplayName ?? ( 'کاربر ' . $event->actorUserId ) ); ?><?php endif; ?>
+													</span>
+													<time dir="ltr" datetime="<?php echo esc_attr( str_replace( ' ', 'T', $event->createdAt ) . 'Z' ); ?>"><?php echo esc_html( $event->createdAt ); ?> UTC</time>
+												</div>
+											</li>
+										<?php endforeach; ?>
+									</ol>
+								</section>
 							</div>
 						</details>
 

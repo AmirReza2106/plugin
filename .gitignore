@@ -6,4 +6,5 @@
 /.phpstan-cache/
 /.idea/
 /.vscode/
+/dist/
 *.log

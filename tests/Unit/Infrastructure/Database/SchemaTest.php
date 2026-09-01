@@ -32,7 +32,9 @@ final class SchemaTest extends TestCase {
 		self::assertStringContainsString( 'KEY requester_status_date', $statements[0] );
 		self::assertStringNotContainsString( 'tracking_token_hash', $statements[0] );
 		self::assertStringContainsString( 'KEY allocation_lookup', $statements[0] );
+		self::assertStringContainsString( 'ENGINE=InnoDB', $statements[0] );
 		self::assertStringContainsString( 'CREATE TABLE wp_workshop_status_history', $statements[1] );
 		self::assertStringContainsString( 'KEY request_history', $statements[1] );
+		self::assertStringContainsString( 'ENGINE=InnoDB', $statements[1] );
 	}
 }
