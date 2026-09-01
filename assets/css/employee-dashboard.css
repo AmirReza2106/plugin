@@ -1,0 +1,443 @@
+.workshop-dashboard {
+	--booking-navy: #15324b;
+	--booking-blue: #2563a6;
+	--booking-blue-soft: #eaf3fb;
+	--booking-green: #198754;
+	--booking-green-soft: #e8f6ef;
+	--booking-slate: #536475;
+	--booking-border: #d8e1e8;
+	--booking-amber: #a86405;
+	--booking-red: #b42318;
+	max-inline-size: 76rem;
+	color: #1d2935;
+}
+
+.workshop-dashboard__hero {
+	display: flex;
+	gap: 1.5rem;
+	align-items: center;
+	justify-content: space-between;
+	margin-block: 1.5rem;
+	padding: clamp(1.4rem, 4vw, 2.25rem);
+	border-radius: 1rem;
+	background: linear-gradient(135deg, #102d46, #2563a6);
+	color: #fff;
+	box-shadow: 0 1rem 2.5rem rgb(21 50 75 / 18%);
+}
+
+.workshop-dashboard__hero h1,
+.workshop-dashboard__hero p {
+	margin-block: 0.25rem;
+	color: inherit;
+}
+
+.workshop-dashboard__eyebrow {
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	opacity: 0.75;
+}
+
+.workshop-dashboard__primary {
+	display: inline-flex;
+	gap: 0.45rem;
+	align-items: center;
+	flex: 0 0 auto;
+	padding: 0.8rem 1.1rem;
+	border: 0;
+	border-radius: 0.55rem;
+	background: #fff;
+	color: var(--booking-navy);
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.workshop-dashboard__section {
+	margin-block: 1.25rem;
+	padding: clamp(1rem, 3vw, 1.5rem);
+	border: 1px solid var(--booking-border);
+	border-radius: 0.9rem;
+	background: #fff;
+	box-shadow: 0 0.45rem 1.6rem rgb(21 50 75 / 6%);
+}
+
+.workshop-dashboard__section-heading {
+	display: flex;
+	gap: 1rem;
+	align-items: end;
+	justify-content: space-between;
+	margin-block-end: 1rem;
+}
+
+.workshop-dashboard__section-heading h2,
+.workshop-dashboard__section-heading p {
+	margin-block: 0.2rem;
+}
+
+.workshop-dashboard__date-form {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.workshop-dashboard__legend {
+	display: flex;
+	gap: 1rem;
+	margin-block: 0.8rem;
+	color: var(--booking-slate);
+}
+
+.workshop-dashboard__legend-dot {
+	display: inline-block;
+	inline-size: 0.65rem;
+	block-size: 0.65rem;
+	margin-inline-end: 0.25rem;
+	border-radius: 50%;
+}
+
+.workshop-dashboard__legend-dot--available {
+	background: var(--booking-green);
+}
+
+.workshop-dashboard__legend-dot--occupied {
+	background: var(--booking-slate);
+}
+
+.workshop-dashboard__rooms {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.workshop-room-card {
+	padding: 1rem;
+	border: 1px solid var(--booking-border);
+	border-radius: 0.7rem;
+	background: #fbfdff;
+}
+
+.workshop-room-card header,
+.workshop-room-card__hours {
+	display: flex;
+	justify-content: space-between;
+}
+
+.workshop-room-card header h3 {
+	margin: 0;
+}
+
+.workshop-room-card header span,
+.workshop-room-card__hours {
+	color: var(--booking-slate);
+	font-size: 0.82rem;
+}
+
+.workshop-room-card__hours {
+	margin-block-start: 1rem;
+}
+
+.workshop-room-card__timeline {
+	position: relative;
+	block-size: 1.15rem;
+	margin-block: 0.35rem 0.9rem;
+	border-radius: 99rem;
+	background: var(--booking-green-soft);
+	overflow: hidden;
+}
+
+.workshop-room-card__occupied {
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: var(--period-start);
+	inline-size: var(--period-width);
+	background: var(--booking-slate);
+}
+
+.workshop-room-card__periods {
+	display: flex;
+	gap: 0.45rem;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.workshop-room-card__periods span {
+	padding: 0.25rem 0.55rem;
+	border-radius: 99rem;
+	background: var(--booking-green-soft);
+	color: #12623f;
+	font-size: 0.8rem;
+}
+
+.workshop-room-card__periods .workshop-room-card__none {
+	background: #f4e8e7;
+	color: var(--booking-red);
+}
+
+.workshop-dashboard__tabs {
+	display: flex;
+	gap: 0.45rem;
+	margin-block-end: 1rem;
+	overflow-x: auto;
+}
+
+.workshop-dashboard__tabs a {
+	display: inline-flex;
+	gap: 0.4rem;
+	align-items: center;
+	padding: 0.55rem 0.75rem;
+	border-radius: 0.45rem;
+	color: var(--booking-slate);
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.workshop-dashboard__tabs a.is-active {
+	background: var(--booking-blue-soft);
+	color: var(--booking-blue);
+	font-weight: 700;
+}
+
+.workshop-dashboard__tabs span {
+	display: inline-grid;
+	place-items: center;
+	min-inline-size: 1.4rem;
+	block-size: 1.4rem;
+	border-radius: 99rem;
+	background: rgb(83 100 117 / 10%);
+}
+
+.workshop-dashboard__booking-list {
+	display: grid;
+	gap: 0.75rem;
+}
+
+.workshop-booking-card {
+	display: grid;
+	grid-template-columns: minmax(14rem, 1fr) minmax(16rem, 0.8fr);
+	gap: 1rem;
+	align-items: center;
+	padding: 1rem;
+	border: 1px solid var(--booking-border);
+	border-radius: 0.65rem;
+}
+
+.workshop-booking-card h3 {
+	margin-block: 0.4rem;
+}
+
+.workshop-booking-card code {
+	font-size: 0.75rem;
+}
+
+.workshop-booking-card dl {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0.65rem;
+	margin: 0;
+}
+
+.workshop-booking-card dl div {
+	padding: 0.6rem;
+	border-radius: 0.45rem;
+	background: #f6f8fa;
+}
+
+.workshop-booking-card dt {
+	color: var(--booking-slate);
+	font-size: 0.75rem;
+}
+
+.workshop-booking-card dd {
+	margin: 0.2rem 0 0;
+	font-weight: 700;
+}
+
+.workshop-status {
+	display: inline-flex;
+	padding: 0.25rem 0.55rem;
+	border-radius: 99rem;
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+
+.workshop-status--pending {
+	background: #fff3d6;
+	color: var(--booking-amber);
+}
+
+.workshop-status--approved {
+	background: var(--booking-green-soft);
+	color: var(--booking-green);
+}
+
+.workshop-status--rejected {
+	background: #fdeceb;
+	color: var(--booking-red);
+}
+
+.workshop-dashboard__empty {
+	padding: 2rem;
+	border: 1px dashed var(--booking-border);
+	border-radius: 0.6rem;
+	text-align: center;
+	color: var(--booking-slate);
+}
+
+.workshop-dashboard__empty .dashicons {
+	inline-size: auto;
+	block-size: auto;
+	font-size: 2rem;
+}
+
+.workshop-dashboard__alert {
+	margin-block: 1rem;
+	padding: 0.9rem 1rem;
+	border-inline-start: 0.3rem solid;
+	border-radius: 0.4rem;
+}
+
+.workshop-dashboard__alert--error {
+	border-color: var(--booking-red);
+	background: #fdeceb;
+	color: #7a1a13;
+}
+
+.workshop-booking-dialog,
+.workshop-success-dialog {
+	inline-size: min(42rem, calc(100% - 2rem));
+	max-block-size: calc(100dvh - 2rem);
+	padding: 0;
+	border: 0;
+	border-radius: 0.8rem;
+	box-shadow: 0 1.5rem 5rem rgb(16 45 70 / 30%);
+	overflow: auto;
+}
+
+.workshop-booking-dialog::backdrop,
+.workshop-success-dialog::backdrop {
+	background: rgb(15 35 52 / 68%);
+	backdrop-filter: blur(3px);
+}
+
+.workshop-booking-dialog__header {
+	display: flex;
+	justify-content: space-between;
+	padding: 1.2rem 1.4rem;
+	background: var(--booking-navy);
+	color: #fff;
+}
+
+.workshop-booking-dialog__header h2,
+.workshop-booking-dialog__header span {
+	margin: 0;
+	color: inherit;
+}
+
+.workshop-booking-dialog__header button {
+	border: 0;
+	background: transparent;
+	color: #fff;
+	font-size: 1.8rem;
+	cursor: pointer;
+}
+
+.workshop-booking-dialog__form {
+	padding: 1.4rem;
+}
+
+.workshop-booking-dialog__grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+}
+
+.workshop-booking-dialog__grid label {
+	display: grid;
+	gap: 0.35rem;
+	font-weight: 600;
+}
+
+.workshop-booking-dialog__grid input,
+.workshop-booking-dialog__grid textarea {
+	inline-size: 100%;
+	box-sizing: border-box;
+}
+
+.workshop-booking-dialog__grid .is-wide {
+	grid-column: 1 / -1;
+}
+
+.workshop-booking-dialog__rule {
+	padding: 0.7rem;
+	border-radius: 0.4rem;
+	background: var(--booking-blue-soft);
+	color: var(--booking-navy);
+}
+
+.workshop-booking-dialog__actions {
+	display: flex;
+	gap: 0.6rem;
+	justify-content: end;
+}
+
+.workshop-success-dialog {
+	inline-size: min(30rem, calc(100% - 2rem));
+	padding: 2rem;
+	text-align: center;
+}
+
+.workshop-success-dialog__icon {
+	display: grid;
+	place-items: center;
+	inline-size: 3.2rem;
+	block-size: 3.2rem;
+	margin-inline: auto;
+	border-radius: 50%;
+	background: var(--booking-green-soft);
+	color: var(--booking-green);
+	font-size: 1.7rem;
+}
+
+.workshop-success-dialog dl div {
+	display: flex;
+	justify-content: space-between;
+	padding-block: 0.6rem;
+	border-block-end: 1px solid var(--booking-border);
+}
+
+.workshop-success-dialog dd {
+	margin: 0;
+}
+
+@media (max-width: 50rem) {
+	.workshop-dashboard__hero,
+	.workshop-dashboard__section-heading {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.workshop-dashboard__rooms,
+	.workshop-booking-dialog__grid {
+		grid-template-columns: 1fr;
+	}
+
+	.workshop-booking-dialog__grid .is-wide {
+		grid-column: auto;
+	}
+
+	.workshop-booking-card {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 35rem) {
+	.workshop-dashboard__date-form,
+	.workshop-booking-card dl {
+		grid-template-columns: 1fr;
+	}
+
+	.workshop-dashboard__date-form {
+		display: grid;
+	}
+}

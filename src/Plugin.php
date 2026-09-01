@@ -12,9 +12,17 @@ namespace WorkshopRegistration;
 use Throwable;
 use WorkshopRegistration\Access\RoleManager;
 use WorkshopRegistration\Admin\SchedulingSettingsPage;
+use WorkshopRegistration\Application\EmployeeDashboard\AvailabilityTimelineBuilder;
+use WorkshopRegistration\Application\Registration\RegistrationServiceFactory;
+use WorkshopRegistration\Employee\BookingInputValidator;
+use WorkshopRegistration\Employee\EmployeeBookingHandler;
+use WorkshopRegistration\Employee\EmployeeDashboardPage;
+use WorkshopRegistration\Employee\EmployeeNoticeStore;
 use WorkshopRegistration\Infrastructure\Database\Migrator;
 use WorkshopRegistration\Infrastructure\Database\Schema;
 use WorkshopRegistration\Infrastructure\Database\Tables;
+use WorkshopRegistration\Infrastructure\Database\WordPressEmployeeBookingQuery;
+use WorkshopRegistration\Infrastructure\Database\WordPressWorkshopRepository;
 use WorkshopRegistration\Infrastructure\Settings\SchedulingSettings;
 
 /**
@@ -43,6 +51,7 @@ final class Plugin {
 		add_action( 'plugins_loaded', array( self::class, 'maybeProvisionAccess' ), 6 );
 		add_action( 'init', array( self::class, 'loadTextDomain' ) );
 		self::registerAdmin();
+		self::registerEmployeeDashboard();
 	}
 
 	/**
@@ -126,6 +135,32 @@ final class Plugin {
 			$wpdb,
 			new Tables( $wpdb->prefix ),
 			new SchedulingSettings()
+		) )->register();
+	}
+
+	/**
+	 * Register authenticated employee dashboard and submission hooks.
+	 */
+	private static function registerEmployeeDashboard(): void {
+		global $wpdb;
+
+		$tables       = new Tables( $wpdb->prefix );
+		$settings     = new SchedulingSettings();
+		$notice_store = new EmployeeNoticeStore();
+
+		( new EmployeeDashboardPage(
+			new WordPressWorkshopRepository( $wpdb, $tables ),
+			new WordPressEmployeeBookingQuery( $wpdb, $tables ),
+			new AvailabilityTimelineBuilder(),
+			$settings,
+			$notice_store
+		) )->register();
+
+		( new EmployeeBookingHandler(
+			new RegistrationServiceFactory( $wpdb, $settings ),
+			$settings,
+			new BookingInputValidator(),
+			$notice_store
 		) )->register();
 	}
 }
